@@ -49,3 +49,30 @@ func handlerRegister(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerReset(s *state, cmd command) error {
+	if err := s.db.DeleteUsers(context.Background()); err != nil {
+		return fmt.Errorf("error deleting table users: %s\n", err)
+	}
+
+	fmt.Println("Table users successfully deleted.")
+	return nil
+}
+
+func handlerFetchUsers(s *state, cmd command) error {
+	users, err := s.db.GetUsers(context.Background())
+
+	if err != nil {
+		return fmt.Errorf("error fetching users: %s\n", err)
+	}
+
+	for _, user := range users {
+		if user == s.state.Current_user_name {
+			fmt.Printf("* %s (current)\n", user)
+		} else {
+			fmt.Printf("* %s\n", user)
+		}
+	}
+
+	return nil
+}

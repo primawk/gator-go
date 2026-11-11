@@ -37,6 +37,8 @@ func main() {
 
 	commandsInit.register("login", handlerLogin)
 	commandsInit.register("register", handlerRegister)
+	commandsInit.register("reset", handlerReset)
+	commandsInit.register("users", handlerFetchUsers)
 
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a command")
@@ -48,6 +50,8 @@ func main() {
 	if (os.Args[1] == "login" || os.Args[1] == "register") && len(os.Args) > 2 {
 		commandInput.name = os.Args[1]
 		commandInput.args = []string{os.Args[2]}
+	} else if os.Args[1] == "reset" || os.Args[1] == "users" {
+		commandInput.name = os.Args[1]
 	} else {
 		fmt.Println("username is required.")
 		os.Exit(1)
