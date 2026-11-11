@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 type command struct {
 	name string
@@ -12,7 +15,10 @@ type commands struct {
 }
 
 func (c *commands) run(s *state, cmd command) {
-	c.commandList[cmd.name](s, cmd)
+	if err := c.commandList[cmd.name](s, cmd); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func (c *commands) register(name string, f func(*state, command) error) {
