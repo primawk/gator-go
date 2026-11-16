@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"encoding/xml"
-	// "errors"
+	"errors"
 	"fmt"
+	"github.com/google/uuid"
+	"github.com/primawk/gator-go/internal/database"
 	"html"
 	"io"
 	"net/http"
@@ -43,11 +45,11 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	}
 
 	resource.Channel.Title = html.UnescapeString(resource.Channel.Title)
-		resource.Channel.Description = html.UnescapeString(resource.Channel.Description)
+	resource.Channel.Description = html.UnescapeString(resource.Channel.Description)
 
 	for i, rssItem := range resource.Channel.Item {
 		resource.Channel.Item[i].Title = html.UnescapeString(rssItem.Title)
-				resource.Channel.Item[i].Description = html.UnescapeString(rssItem.Description)
+		resource.Channel.Item[i].Description = html.UnescapeString(rssItem.Description)
 	}
 
 	return resource, nil
@@ -65,6 +67,37 @@ func handlerFetchFeed(s *state, cmd command) error {
 	}
 
 	fmt.Println(rssFeed)
+
+	return nil
+}
+
+func handleAddFeed(s *state, cmd command) error {
+	if len(s.state.Current_user_name) == 0 {
+		return errors.New("login is required.")
+	}
+
+	user, err := s.db.GetUser(context.Background(), s.state.Current_user_name)
+
+	if err != nil {
+		return fmt.Errorf("error getting the user id: %s", err)
+	}
+
+	payload := database.CreateFeedParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Name:      cmd.args[0],
+		Url:       cmd.args[1],
+		UserID:    user.ID,
+	}
+
+	feed, err := s.db.CreateFeed(context.Background(), payload)
+
+	if err != nil {
+		return fmt.Errorf("error saving a feed: %s\n", err)
+	}
+
+	fmt.Println(feed)
 
 	return nil
 }

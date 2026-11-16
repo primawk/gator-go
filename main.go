@@ -40,6 +40,7 @@ func main() {
 	commandsInit.register("reset", handlerReset)
 	commandsInit.register("users", handlerFetchUsers)
 	commandsInit.register("agg", handlerFetchFeed)
+	commandsInit.register("addfeed", handleAddFeed)
 
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a command")
@@ -53,8 +54,11 @@ func main() {
 		commandInput.args = []string{os.Args[2]}
 	} else if os.Args[1] == "reset" || os.Args[1] == "users" || os.Args[1] == "agg" {
 		commandInput.name = os.Args[1]
+	} else if os.Args[1] == "addfeed" && len(os.Args) > 3 {
+		commandInput.name = os.Args[1]
+		commandInput.args = []string{os.Args[2], os.Args[3]}
 	} else {
-		fmt.Println("an argument is required.")
+		fmt.Println("there is an argument missing.")
 		os.Exit(1)
 	}
 
