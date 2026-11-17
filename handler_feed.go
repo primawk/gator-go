@@ -101,3 +101,15 @@ func handleAddFeed(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerFeeds(s *state, cmd command) error {
+	feeds, err := s.db.GetFeeds(context.Background())
+
+	if err != nil {
+		return fmt.Errorf("error fetching feeds: %s\n", err)
+	}
+
+	fmt.Println(feeds)
+
+	return nil
+}
