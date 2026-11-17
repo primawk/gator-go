@@ -56,11 +56,11 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 }
 
 func handlerFetchFeed(s *state, cmd command) error {
-	// if len(cmd.args) == 0 {
-	// 	return errors.New("url is required.")
-	// }
+	if len(cmd.args) == 0 {
+		return errors.New("url is required.")
+	}
 
-	rssFeed, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
+	rssFeed, err := fetchFeed(context.Background(), cmd.args[0])
 
 	if err != nil {
 		return fmt.Errorf("Error fetching a feed: %s", err)
@@ -71,17 +71,7 @@ func handlerFetchFeed(s *state, cmd command) error {
 	return nil
 }
 
-func handlerAddFeed(s *state, cmd command) error {
-	if len(s.state.Current_user_name) == 0 {
-		return errors.New("login is required.")
-	}
-
-	user, err := s.db.GetUser(context.Background(), s.state.Current_user_name)
-
-	if err != nil {
-		return fmt.Errorf("error getting the user id: %s", err)
-	}
-
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	payload := database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
@@ -105,7 +95,7 @@ func handlerAddFeed(s *state, cmd command) error {
 		FeedID:    feed.ID,
 	}
 
-	_, errCreateFeed := s.db.CreateFeedFollow(context.Background(), payloadCreateFeed) 
+	_, errCreateFeed := s.db.CreateFeedFollow(context.Background(), payloadCreateFeed)
 
 	if err != nil {
 		return fmt.Errorf("error creating a feed follow: %s", errCreateFeed)
@@ -128,17 +118,7 @@ func handlerFeeds(s *state, cmd command) error {
 	return nil
 }
 
-func handlerFollowFeed(s *state, cmd command) error {
-	if len(s.state.Current_user_name) == 0 {
-		return errors.New("login is required.")
-	}
-
-	user, err := s.db.GetUser(context.Background(), s.state.Current_user_name)
-
-	if err != nil {
-		return fmt.Errorf("error getting the user id: %s", err)
-	}
-
+func handlerFollowFeed(s *state, cmd command, user database.User) error {
 	feedId, err := s.db.GetFeedId(context.Background(), cmd.args[0])
 
 	if err != nil {
@@ -164,17 +144,7 @@ func handlerFollowFeed(s *state, cmd command) error {
 	return nil
 }
 
-func handlerFetchFollowing(s *state, cmd command) error {
-	if len(s.state.Current_user_name) == 0 {
-		return errors.New("login is required.")
-	}
-
-	user, err := s.db.GetUser(context.Background(), s.state.Current_user_name)
-
-	if err != nil {
-		return fmt.Errorf("error getting the user id: %s", err)
-	}
-
+func handlerFetchFollowing(s *state, cmd command, user database.User) error {
 	feeds, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
 
 	if err != nil {
@@ -185,5 +155,3 @@ func handlerFetchFollowing(s *state, cmd command) error {
 
 	return nil
 }
-
-

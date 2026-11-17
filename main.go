@@ -40,10 +40,10 @@ func main() {
 	commandsInit.register("reset", handlerReset)
 	commandsInit.register("users", handlerFetchUsers)
 	commandsInit.register("agg", handlerFetchFeed)
-	commandsInit.register("addfeed", handlerAddFeed)
+	commandsInit.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	commandsInit.register("feeds", handlerFeeds)
-	commandsInit.register("follow", handlerFollowFeed)
-	commandsInit.register("following", handlerFetchFollowing)
+	commandsInit.register("follow", middlewareLoggedIn(handlerFollowFeed))
+	commandsInit.register("following", middlewareLoggedIn(handlerFetchFollowing))
 
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a command")
