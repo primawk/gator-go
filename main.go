@@ -40,8 +40,10 @@ func main() {
 	commandsInit.register("reset", handlerReset)
 	commandsInit.register("users", handlerFetchUsers)
 	commandsInit.register("agg", handlerFetchFeed)
-	commandsInit.register("addfeed", handleAddFeed)
+	commandsInit.register("addfeed", handlerAddFeed)
 	commandsInit.register("feeds", handlerFeeds)
+	commandsInit.register("follow", handlerFollowFeed)
+	commandsInit.register("following", handlerFetchFollowing)
 
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a command")
@@ -50,10 +52,10 @@ func main() {
 
 	var commandInput command
 
-	if (os.Args[1] == "login" || os.Args[1] == "register") && len(os.Args) > 2 {
+	if (os.Args[1] == "login" || os.Args[1] == "register" || os.Args[1] == "follow") && len(os.Args) > 2 {
 		commandInput.name = os.Args[1]
 		commandInput.args = []string{os.Args[2]}
-	} else if os.Args[1] == "reset" || os.Args[1] == "users" || os.Args[1] == "agg" || os.Args[1] == "feeds" {
+	} else if os.Args[1] == "reset" || os.Args[1] == "users" || os.Args[1] == "agg" || os.Args[1] == "feeds" || os.Args[1] == "following" {
 		commandInput.name = os.Args[1]
 	} else if os.Args[1] == "addfeed" && len(os.Args) > 3 {
 		commandInput.name = os.Args[1]
