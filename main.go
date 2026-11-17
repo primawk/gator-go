@@ -44,6 +44,7 @@ func main() {
 	commandsInit.register("feeds", handlerFeeds)
 	commandsInit.register("follow", middlewareLoggedIn(handlerFollowFeed))
 	commandsInit.register("following", middlewareLoggedIn(handlerFetchFollowing))
+	commandsInit.register("unfollow", middlewareLoggedIn(handlerUnfollow))
 
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a command")
@@ -52,7 +53,7 @@ func main() {
 
 	var commandInput command
 
-	if (os.Args[1] == "login" || os.Args[1] == "register" || os.Args[1] == "follow") && len(os.Args) > 2 {
+	if (os.Args[1] == "login" || os.Args[1] == "register" || os.Args[1] == "follow" || os.Args[1] == "unfollow") && len(os.Args) > 2 {
 		commandInput.name = os.Args[1]
 		commandInput.args = []string{os.Args[2]}
 	} else if os.Args[1] == "reset" || os.Args[1] == "users" || os.Args[1] == "agg" || os.Args[1] == "feeds" || os.Args[1] == "following" {

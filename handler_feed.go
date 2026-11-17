@@ -155,3 +155,26 @@ func handlerFetchFollowing(s *state, cmd command, user database.User) error {
 
 	return nil
 }
+
+func handlerUnfollow(s *state, cmd command, user database.User) error {
+	if len(cmd.args) == 0 {
+		return errors.New("feed url is required.")
+	}
+
+	feedId, err := s.db.GetFeedId(context.Background(), cmd.args[0])
+
+	if err != nil {
+		return fmt.Errorf("error getting the feed details: %s", err)
+	}
+
+	payload := database.DeleteFeedFollowParams{
+		UserID: user.ID,
+		FeedID: feedId,
+	}
+
+	if errDeleteFeedFollow := s.db.DeleteFeedFollow(context.Background(), payload); errDeleteFeedFollow != nil {
+		return fmt.Errorf("error to unfollow a feed: %s", err)
+	}
+
+	return nil
+}
