@@ -1,5 +1,12 @@
-This project requires Postgres and Go installed.
+# Gator 🐊
 
+We're going to build an RSS feed aggregator in Go! We'll call it "Gator", you know, because aggreGATOR 🐊. Anyhow, it's a CLI tool that allows users to:
+- Add RSS feeds from across the internet to be collected
+- Store the collected posts in a PostgreSQL database
+- Follow and unfollow RSS feeds that other users have added
+- View summaries of the aggregated posts in the terminal, with a link to the full post
+
+---
 
 ## Commands
 
@@ -23,19 +30,19 @@ Here is a list of available commands you can run with the CLI application:
 
 ```bash
 # Register a new user
-./your-cli-app register alice
+./gator register alice
 
 # Log in as an existing user
-./your-cli-app login alice
+./gator login alice
 
 # Add a new feed (requires login)
-./your-cli-app addfeed "Boot.dev Blog" "[https://blog.boot.dev/index.xml](https://blog.boot.dev/index.xml)"
+./gator addfeed "Boot.dev Blog" "[https://blog.boot.dev/index.xml](https://blog.boot.dev/index.xml)"
 
 # View all available feeds
-./your-cli-app feeds
+./gator feeds
 
 # Follow a feed (requires login)
-./your-cli-app follow "[https://blog.boot.dev/index.xml](https://blog.boot.dev/index.xml)"
+./gator follow "[https://blog.boot.dev/index.xml](https://blog.boot.dev/index.xml)"
 
 # Browse the 5 most recent posts
-./your-cli-app browse 5
+./gator browse 5
