@@ -8,6 +8,26 @@ We're going to build an RSS feed aggregator in Go! We'll call it "Gator", you kn
 
 ---
 
+## Installation
+
+Make sure you have the latest [Go toolchain](https://golang.org/dl/) installed as well as a local Postgres database. You can then install `gator` with:
+
+```sh
+go install ...
+```
+
+## Config
+
+Create a `.gatorconfig.json` file in your home directory with the following structure:
+
+```json
+{
+  "db_url": "postgres://username:@localhost:5432/database?sslmode=disable"
+}
+```
+
+Replace the values with your database connection string.
+
 ## Commands
 
 Here is a list of available commands you can run with the CLI application:
