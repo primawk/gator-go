@@ -53,10 +53,10 @@ func main() {
 
 	var commandInput command
 
-	if (os.Args[1] == "login" || os.Args[1] == "register" || os.Args[1] == "follow" || os.Args[1] == "unfollow") && len(os.Args) > 2 {
+	if (os.Args[1] == "login" || os.Args[1] == "register" || os.Args[1] == "follow" || os.Args[1] == "unfollow" || os.Args[1] == "agg") && len(os.Args) > 2 {
 		commandInput.name = os.Args[1]
 		commandInput.args = []string{os.Args[2]}
-	} else if os.Args[1] == "reset" || os.Args[1] == "users" || os.Args[1] == "agg" || os.Args[1] == "feeds" || os.Args[1] == "following" {
+	} else if os.Args[1] == "reset" || os.Args[1] == "users" || os.Args[1] == "feeds" || os.Args[1] == "following" {
 		commandInput.name = os.Args[1]
 	} else if os.Args[1] == "addfeed" && len(os.Args) > 3 {
 		commandInput.name = os.Args[1]

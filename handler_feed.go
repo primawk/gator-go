@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -57,16 +58,17 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 
 func handlerFetchFeed(s *state, cmd command) error {
 	if len(cmd.args) == 0 {
-		return errors.New("url is required.")
+		return errors.New("time between request is required.")
 	}
 
-	rssFeed, err := fetchFeed(context.Background(), cmd.args[0])
+	timeBetweenRequests, _ := time.ParseDuration(cmd.args[0])
 
-	if err != nil {
-		return fmt.Errorf("Error fetching a feed: %s", err)
+	fmt.Printf("Collecting feeds every %s\n", timeBetweenRequests)
+
+	ticker := time.NewTicker(timeBetweenRequests)
+	for ; ; <-ticker.C {
+		scrapeFeeds(s, cmd)
 	}
-
-	fmt.Println(rssFeed)
 
 	return nil
 }
@@ -174,6 +176,38 @@ func handlerUnfollow(s *state, cmd command, user database.User) error {
 
 	if errDeleteFeedFollow := s.db.DeleteFeedFollow(context.Background(), payload); errDeleteFeedFollow != nil {
 		return fmt.Errorf("error to unfollow a feed: %s", err)
+	}
+
+	return nil
+}
+
+func scrapeFeeds(s *state, cmd command) error {
+	feed, err := s.db.GetNextFeedToFetch(context.Background())
+
+	if err != nil {
+		return fmt.Errorf("error getting the next feed to fetch: %s", err)
+	}
+
+	payload := database.MarkFeedFetchedParams{
+		LastFetchedAt: sql.NullTime{
+			Time:  time.Now(),
+			Valid: true, // true means it's not NULL
+		},
+		ID: feed.ID,
+	}
+
+	if err := s.db.MarkFeedFetched(context.Background(), payload); err != nil {
+		return fmt.Errorf("error marking the feed: %s", err)
+	}
+
+	rssFeed, err := fetchFeed(context.Background(), feed.Url)
+
+	if err != nil {
+		return fmt.Errorf("Error fetching a feed: %s", err)
+	}
+
+	for _, item := range rssFeed.Channel.Item {
+		fmt.Println(item.Title)
 	}
 
 	return nil
