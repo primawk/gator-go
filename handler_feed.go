@@ -207,7 +207,23 @@ func scrapeFeeds(s *state, cmd command) error {
 	}
 
 	for _, item := range rssFeed.Channel.Item {
-		fmt.Println(item.Title)
+		parsedTime, err := time.Parse(time.RFC1123Z, item.PubDate)
+
+		if err != nil {
+			return fmt.Errorf("Error parsing published date: %s", err)
+		}
+
+		payloadCreatePost := database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: item.Description,
+			PublishedAt: parsedTime,
+			FeedID:      feed.ID,
+		}
+		s.db.CreatePost(context.Background(), payloadCreatePost)
 	}
 
 	return nil
